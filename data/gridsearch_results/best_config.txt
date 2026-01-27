@@ -1,0 +1,23 @@
+Best configuration (sorted by val F1 desc, then val FPR asc)
+======================================================================
+tfidf__ngram_range: (1, 2)
+tfidf__min_df: 3
+tfidf__max_df: 0.9
+tfidf__max_features: 10000
+tfidf__sublinear_tf: False
+tfidf__norm: l2
+lr__solver: liblinear
+lr__penalty: l2
+lr__C: 2.0
+lr__class_weight: balanced
+lr__max_iter: 50
+
+Validation (at val-chosen threshold)
+  thr: 0.65
+  F1(phish): 0.9822
+  FPR:       0.0029
+  AUC:       0.9994
+  Acc:       0.9929
+  Prec:      0.9881
+  Recall:    0.9765
+  Train sec: 4.063
