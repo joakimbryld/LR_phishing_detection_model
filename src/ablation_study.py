@@ -126,10 +126,10 @@ def get_memory_usage(predict_fn, texts):
     if len(texts) == 0:
         return 0.0
 
-    not_used = predict_fn(texts[:min(10, len(texts))])  
+    predict_fn(texts[:min(10, len(texts))])
     tracemalloc.start()
-    not_used = predict_fn(texts)
-    not_used, peak = tracemalloc.get_traced_memory()
+    predict_fn(texts)
+    _, peak = tracemalloc.get_traced_memory()
     tracemalloc.stop()
 
     return peak / (1024.0 * 1024.0)  # converting to MB

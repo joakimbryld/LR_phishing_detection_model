@@ -68,7 +68,7 @@ def compute_metrics(y_true, y_pred):
 
     false_negative_rate = fn / (fn + tp)
 
-    precision, recall, f1, not_used = precision_recall_fscore_support(
+    precision, recall, f1, _ = precision_recall_fscore_support(
         y_true,
         y_pred,
         average=None,
