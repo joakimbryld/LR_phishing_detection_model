@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 import helpers as h
 from sklearn.calibration import CalibratedClassifierCV
-from sklearn.model_selection import train_test_split
 
 THRESHOLD = 0.56
 RANDOM_STATE = 42
@@ -12,33 +11,19 @@ RANDOM_STATE = 42
 
 def main():
     df = h.load_internal_dataset()
-    df["text_norm"] = h.normalize_text_series(df["text"])
-    X_all = df["text"].astype(str).values
-    y_all = df["label"].values
-    text_norm_all = df["text_norm"]
-
-    idx = np.arange(len(df))
-    train_idx, temp_idx = train_test_split(
-        idx,
+    split = h.split_with_overlap_removal(
+        df,
+        text_col="text",
         test_size=0.3,
-        stratify=y_all,
+        val_size=0.5,
         random_state=RANDOM_STATE,
     )
-    y_temp = y_all[temp_idx]
-    val_idx, test_idx = train_test_split(
-        temp_idx,
-        test_size=0.5,
-        stratify=y_temp,
-        random_state=RANDOM_STATE,
-    )
-
-    train_norm_set = set(text_norm_all[train_idx])
-    val_mask = ~text_norm_all[val_idx].isin(train_norm_set)
-    val_idx_clean = val_idx[val_mask.values]
-    val_norm_set = set(text_norm_all[val_idx_clean])
-    train_val_norm_set = train_norm_set.union(val_norm_set)
-    test_mask = ~text_norm_all[test_idx].isin(train_val_norm_set)
-    test_idx_clean = test_idx[test_mask.values]
+    df_norm = split["df_norm"]
+    X_all = df_norm["text"].astype(str).values
+    y_all = df_norm["label"].values
+    train_idx = split["train_idx"]
+    val_idx_clean = split["val_idx_clean"]
+    test_idx_clean = split["test_idx_clean"]
 
     X_train = X_all[train_idx]
     y_train = y_all[train_idx]
@@ -98,7 +83,7 @@ def main():
             snippet = str(row["snippet"])
             prob = f"{float(row['probability']):.4f}"
             f.write(f"{err_type}\t{snippet}\t{prob}\n")
-    print(f"Saved: {out_txt}")
+    print(f"Saved: ", out_txt)
 
 
 if __name__ == "__main__":
